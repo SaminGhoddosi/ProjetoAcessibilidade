@@ -23,10 +23,10 @@ public class Rota {
     @Column(name = "criado_em")
     private LocalDateTime criadoEm;
 
-    @OneToMany(mappedBy = "Ponto")
+    @OneToMany(mappedBy = "rota", cascade = CascadeType.ALL)
     private List<Ponto> pontos = new ArrayList<>();
 
-    @OneToMany (mappedBy = "Usuario")
+    @OneToMany (mappedBy = "rota", cascade = CascadeType.ALL)
     private List<Usuario> usuarios = new ArrayList<>();
 
 }

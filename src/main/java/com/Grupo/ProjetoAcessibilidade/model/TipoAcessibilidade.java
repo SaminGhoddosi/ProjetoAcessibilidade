@@ -3,7 +3,9 @@ package com.Grupo.ProjetoAcessibilidade.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -19,5 +21,5 @@ public class TipoAcessibilidade {
     private List<PontosAcessibilidade> pontosAcessibilidade = new ArrayList<>();
 
     @ManyToMany(mappedBy = "tiposAcessibilidade")
-    private List<Usuario> usuarios = new ArrayList<>();
+    private Set<Usuario> usuarios = new HashSet<>();
 }

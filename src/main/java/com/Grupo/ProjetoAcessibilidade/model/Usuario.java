@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Entity
@@ -38,4 +40,15 @@ public class Usuario {
 
     @OneToMany(mappedBy = "usuario")
     private List<PontosAcessibilidade> pontosAcessibilidade = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "rota_id")
+    private Rota rota;
+
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_tipo_acessibilidade",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "tipo_acessibilidade_id"))
+    private Set<TipoAcessibilidade> tiposAcessibilidade = new HashSet<>();
 }

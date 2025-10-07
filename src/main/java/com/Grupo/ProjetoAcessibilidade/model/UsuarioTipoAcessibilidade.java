@@ -8,6 +8,10 @@ import lombok.Data;
 @Table(name = "Usuario_has_TipoAcessibilidade")
 public class UsuarioTipoAcessibilidade {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne
     @JoinColumn(name = "Usuario_idUsuario")
     private Usuario usuario;

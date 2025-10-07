@@ -14,4 +14,9 @@ public class Ponto {
     private String nome;
     private String latitude;
     private String longitude;
+
+    @ManyToOne
+    @JoinColumn(name = "rota_id")
+    private Rota rota;
+
 }

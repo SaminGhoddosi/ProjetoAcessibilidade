@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  valhalla:
+    image: ghcr.io/gis-ops/docker-valhalla/valhalla:latest
+    container_name: valhalla
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./valhalla_tiles:/custom_files
+    environment:
+      # Esta linha diz ao script para usar o arquivo local que baixamos
+      - pbf_path=/custom_files/blumenau.osm.pbf
+    restart: unless-stopped

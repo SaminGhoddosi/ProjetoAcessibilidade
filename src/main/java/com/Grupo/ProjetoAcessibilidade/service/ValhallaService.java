@@ -1,9 +1,13 @@
-// package com.Grupo.ProjetoAcessibilidade.service;
-// ... imports ...
+package com.Grupo.ProjetoAcessibilidade.service;
 
+import com.Grupo.ProjetoAcessibilidade.DTO.LocationDTO;
 import com.Grupo.ProjetoAcessibilidade.DTO.ValhallaRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @Service
 public class ValhallaService {
@@ -11,11 +15,9 @@ public class ValhallaService {
     @Autowired
     private WebClient valhallaWebClient;
 
-    public Mono<String> getAcessibleRoute(Location start, Location end) {
-
+    public Mono<String> getAcessibleRoute(LocationDTO start, LocationDTO end) {
         ValhallaRequest request = new ValhallaRequest(List.of(start, end));
 
-        // O resto do código permanece igual
         return valhallaWebClient.post()
                 .uri("/route")
                 .bodyValue(request)
