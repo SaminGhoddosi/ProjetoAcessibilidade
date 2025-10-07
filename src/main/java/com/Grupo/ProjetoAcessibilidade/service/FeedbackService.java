@@ -1,7 +1,10 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
 import com.Grupo.ProjetoAcessibilidade.DTO.FeedbackDTO;
+import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.Feedback;
+import com.Grupo.ProjetoAcessibilidade.model.PontosAcessibilidade;
+import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.repository.FeedbackRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,41 +15,57 @@ import java.util.Optional;
 @Service
 public class FeedbackService {
 
-    private final FeedbackRepository repository;
+    private final FeedbackRepository feedbackRepository;
+    private final PontosAcessibilidadeService pontosAcessibilidadeService;
+    private final UsuarioService usuarioService;
 
-    @Autowired
-    public FeedbackService(FeedbackRepository repository) {
-        this.repository = repository;
+    public FeedbackService(FeedbackRepository feedbackRepository,
+                           PontosAcessibilidadeService pontosAcessibilidadeService,
+                           UsuarioService usuarioService) {
+        this.feedbackRepository = feedbackRepository;
+        this.pontosAcessibilidadeService = pontosAcessibilidadeService;
+        this.usuarioService = usuarioService;
+    }
+
+    public List<Feedback> listar() {
+        return feedbackRepository.findAll();
+    }
+
+    public Feedback buscarPorId(String id) {
+        return feedbackRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Feedback não encontrado com ID: " + id));
     }
 
     public Feedback salvar(FeedbackDTO dto) {
         Feedback feedback = new Feedback();
+
+        PontosAcessibilidade pontosAcessibilidade = pontosAcessibilidadeService.buscarPorId(dto.pontoAcessibilidadeId());
+        Usuario usuario = usuarioService.buscarPorId(dto.usuarioId());
+
         feedback.setComentario(dto.comentario());
         feedback.setAvaliacao(dto.avaliacao());
-        feedback.setPontosAcessibilidade(dto.pontosAcessibilidade());
-        feedback.setUsuario(dto.usuario());
-        return repository.save(feedback);
+        feedback.setPontosAcessibilidade(pontosAcessibilidade);
+        feedback.setUsuario(usuario);
+
+        return feedbackRepository.save(feedback);
     }
 
-    public List<Feedback> listar() {
-        return repository.findAll();
+
+    public Feedback atualizar(String id, FeedbackDTO dto) {
+        Feedback feedback = buscarPorId(id);
+
+        PontosAcessibilidade pontosAcessibilidade = pontosAcessibilidadeService.buscarPorId(dto.pontoAcessibilidadeId());
+        Usuario usuario = usuarioService.buscarPorId(dto.usuarioId());
+
+        feedback.setComentario(dto.comentario());
+        feedback.setAvaliacao(dto.avaliacao());
+        feedback.setPontosAcessibilidade(pontosAcessibilidade);
+        feedback.setUsuario(usuario);
+
+        return feedbackRepository.save(feedback);
     }
 
-    public Optional<Feedback> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
-
-    public Feedback atualizar(Long id, FeedbackDTO dto) {
-        return repository.findById(id).map(feedback -> {
-            feedback.setComentario(dto.comentario());
-            feedback.setAvaliacao(dto.avaliacao());
-            feedback.setPontosAcessibilidade(dto.pontosAcessibilidade());
-            feedback.setUsuario(dto.usuario());
-            return repository.save(feedback);
-        }).orElseThrow(() -> new RuntimeException("Feedback não encontrado"));
-    }
-
-    public void deletar(Long id) {
-        repository.deleteById(id);
+    public void deletar(String id) {
+        Feedback feedback = buscarPorId(id);
+        feedbackRepository.delete(feedback);
     }
 }

@@ -1,36 +1,33 @@
 package com.Grupo.ProjetoAcessibilidade.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 
 @Data
-@Entity
-@Table(name = "PontosAcessibilidade")
+@Document(collection = "pontosAcessibilidade")
 public class PontosAcessibilidade {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false)
+    @Id
+    private String id;
+
     private String status;
 
-    @Column(nullable = false)
+    @CreatedDate
     private LocalDateTime dataCriacao;
 
-    @ManyToOne
-    @JoinColumn(name = "TipoAcessibilidade_idTipo")
+    @DBRef
     private TipoAcessibilidade tipoAcessibilidade;
 
-    @ManyToOne
-    @JoinColumn(name = "Usuario_idUsuario")
+    @DBRef
     private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "TipoPonto_id")
+    @DBRef
     private TipoPonto tipoPonto;
 
-    @ManyToOne
-    @JoinColumn(name = "ponto_id")
+    @DBRef
     private Ponto ponto;
 }

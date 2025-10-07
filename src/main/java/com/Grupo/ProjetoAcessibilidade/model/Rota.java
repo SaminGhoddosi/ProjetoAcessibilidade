@@ -1,32 +1,32 @@
 package com.Grupo.ProjetoAcessibilidade.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@Entity
-@Table(name = "rotas")
+@Document(collection = "rotas")
 public class Rota {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private String id;
 
     private String caminho;
+
     private String duracao;
+
     private String distancia;
 
-    @Column(name = "criado_em")
+    @CreatedDate
+    @Field("criado_em")
     private LocalDateTime criadoEm;
 
-    @OneToMany(mappedBy = "rota", cascade = CascadeType.ALL)
     private List<Ponto> pontos = new ArrayList<>();
-
-    @OneToMany (mappedBy = "rota", cascade = CascadeType.ALL)
-    private List<Usuario> usuarios = new ArrayList<>();
 
 }

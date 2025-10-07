@@ -1,8 +1,9 @@
 package com.Grupo.ProjetoAcessibilidade.DTO;
 
-import com.Grupo.ProjetoAcessibilidade.model.Usuario;
+import jakarta.validation.constraints.NotBlank;
 
-import java.util.List;
-
-public record PapelDTO(String nome, List<Usuario> usuarios) {
+public record PapelDTO(
+        @NotBlank(message = "O nome não pode estar em branco.")
+        String nome
+) {
 }

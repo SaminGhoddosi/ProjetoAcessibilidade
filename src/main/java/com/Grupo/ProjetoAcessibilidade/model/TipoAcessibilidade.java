@@ -1,25 +1,20 @@
 package com.Grupo.ProjetoAcessibilidade.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.UUID;
 
 @Data
-@Entity
-@Table(name = "TipoAcessibilidade")
+@Document(collection = "tiposAcessibilidade")
 public class TipoAcessibilidade {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTipo;
 
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
     private String tipo;
 
-    @OneToMany(mappedBy = "tipoAcessibilidade")
-    private List<PontosAcessibilidade> pontosAcessibilidade = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "tiposAcessibilidade")
-    private Set<Usuario> usuarios = new HashSet<>();
 }

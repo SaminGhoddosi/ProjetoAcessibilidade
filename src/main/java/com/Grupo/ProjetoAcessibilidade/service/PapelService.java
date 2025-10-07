@@ -1,6 +1,7 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
 import com.Grupo.ProjetoAcessibilidade.DTO.PapelDTO;
+import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.Papel;
 import com.Grupo.ProjetoAcessibilidade.repository.PapelRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,9 +15,16 @@ public class PapelService {
 
     private final PapelRepository repository;
 
-    @Autowired
     public PapelService(PapelRepository repository) {
         this.repository = repository;
+    }
+
+    public List<Papel> listar() {
+        return repository.findAll();
+    }
+
+    public Papel buscarPorId(String id) {
+        return repository.findById(id).orElseThrow(()-> new ResourceNotFound("Role não encontrado com ID: "+ id));
     }
 
     public Papel salvar(PapelDTO dto) {
@@ -25,22 +33,14 @@ public class PapelService {
         return repository.save(papel);
     }
 
-    public List<Papel> listar() {
-        return repository.findAll();
+    public Papel atualizar(String id, PapelDTO dto) {
+        Papel papel = buscarPorId(id);
+        papel.setNome(dto.nome());
+        return repository.save(papel);
     }
 
-    public Optional<Papel> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
-
-    public Papel atualizar(Long id, PapelDTO dto) {
-        return repository.findById(id).map(papel -> {
-            papel.setNome(dto.nome());
-            return repository.save(papel);
-        }).orElseThrow(() -> new RuntimeException("Papel não encontrado"));
-    }
-
-    public void deletar(Long id) {
-        repository.deleteById(id);
+    public void deletar(String id) {
+        Papel papel = buscarPorId(id);
+        repository.delete(papel);
     }
 }

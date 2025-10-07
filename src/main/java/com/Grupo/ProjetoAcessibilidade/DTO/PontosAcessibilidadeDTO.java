@@ -1,11 +1,24 @@
 package com.Grupo.ProjetoAcessibilidade.DTO;
 
-import com.Grupo.ProjetoAcessibilidade.model.Ponto;
-import com.Grupo.ProjetoAcessibilidade.model.TipoAcessibilidade;
-import com.Grupo.ProjetoAcessibilidade.model.TipoPonto;
-import com.Grupo.ProjetoAcessibilidade.model.Usuario;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDateTime;
 
-public record PontosAcessibilidadeDTO(String status, LocalDateTime dataCriacao, TipoAcessibilidade tipoAcessibilidade, Usuario usuario, TipoPonto tipoPonto, Ponto ponto) {
+public record PontosAcessibilidadeDTO(
+
+        @NotBlank(message = "O status não pode estar em branco.")
+        String status,
+
+        @NotNull(message = "O ID do tipo de acessibilidade é obrigatório.")
+        String tipoAcessibilidadeId,
+
+        @NotNull(message = "O ID do usuário que está criando o ponto é obrigatório.")
+        String usuarioId,
+
+        @NotNull(message = "O ID do tipo de ponto é obrigatório.")
+        String tipoPontoId,
+
+        @NotNull(message = "O ID do ponto (localização) é obrigatório.")
+        String pontoId
+) {
 }

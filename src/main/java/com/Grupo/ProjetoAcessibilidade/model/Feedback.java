@@ -1,27 +1,24 @@
 package com.Grupo.ProjetoAcessibilidade.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
-@Table(name = "Feedback")
+@Document(collection = "feedbacks")
 public class Feedback {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idfeedback;
 
-    @Column(nullable = false)
+    @Id
+    private String id;
+
     private String comentario;
 
-    @Column(nullable = false)
     private String avaliacao;
 
-    @ManyToOne
-    @JoinColumn(name = "pontosAcessibilidade_id")
+    @DBRef
     private PontosAcessibilidade pontosAcessibilidade;
 
-    @ManyToOne
-    @JoinColumn(name = "Usuario_idUsuario")
+    @DBRef
     private Usuario usuario;
 }

@@ -1,4 +1,9 @@
 package com.Grupo.ProjetoAcessibilidade.DTO;
 
-public record TipoAcessibilidadeDTO(String tipo) {
+import jakarta.validation.constraints.NotBlank;
+
+public record TipoAcessibilidadeDTO(
+        @NotBlank(message = "O tipo não pode estar em branco")
+        String tipo
+) {
 }

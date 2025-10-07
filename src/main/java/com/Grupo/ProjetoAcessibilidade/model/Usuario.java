@@ -1,54 +1,45 @@
 package com.Grupo.ProjetoAcessibilidade.model;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Data
-@Entity
-@Table(name = "Usuario")
+@Document(collection = "usuarios")
 public class Usuario {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idUsuario;
 
-    @Column(nullable = false)
+    @Id
+    private String id;
+
     private String nome;
 
-    @Column(nullable = false, unique = true)
+    @Indexed(unique = true)
     private String email;
 
-    @Column(nullable = false, unique = true, length = 11)
+    @Indexed(unique = true)
     private String cpf;
 
-    @Column(nullable = false)
     private LocalDateTime dataNascimento;
 
-    @Column(length = 11)
     private String telefone;
 
-    @Column(nullable = false)
     private String senha;
 
-    @ManyToOne
-    @JoinColumn(name = "Papel_id")
+    @DBRef
     private Papel papel;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<PontosAcessibilidade> pontosAcessibilidade = new ArrayList<>();
+    @DBRef
+    private List<Rota> rotasSalvas = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "rota_id")
-    private Rota rota;
-
-    @ManyToMany
-    @JoinTable(
-            name = "usuario_tipo_acessibilidade",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "tipo_acessibilidade_id"))
+    @DBRef
     private Set<TipoAcessibilidade> tiposAcessibilidade = new HashSet<>();
 }

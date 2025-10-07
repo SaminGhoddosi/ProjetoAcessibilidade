@@ -1,6 +1,7 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
 import com.Grupo.ProjetoAcessibilidade.DTO.TipoAcessibilidadeDTO;
+import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.TipoAcessibilidade;
 import com.Grupo.ProjetoAcessibilidade.repository.TipoAcessibilidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,35 +13,35 @@ import java.util.Optional;
 @Service
 public class TipoAcessibilidadeService {
 
-    private final TipoAcessibilidadeRepository repository;
+    private final TipoAcessibilidadeRepository tipoAcessibilidadeRepository;
 
-    @Autowired
-    public TipoAcessibilidadeService(TipoAcessibilidadeRepository repository) {
-        this.repository = repository;
+    public TipoAcessibilidadeService(TipoAcessibilidadeRepository tipoAcessibilidadeRepository) {
+        this.tipoAcessibilidadeRepository = tipoAcessibilidadeRepository;
+    }
+
+    public List<TipoAcessibilidade> listar() {
+        return tipoAcessibilidadeRepository.findAll();
+    }
+
+    public TipoAcessibilidade buscarPorId(String id) {
+        return tipoAcessibilidadeRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Tipo de acessibilidade não encontrado com o ID: " + id));
     }
 
     public TipoAcessibilidade salvar(TipoAcessibilidadeDTO dto) {
         TipoAcessibilidade tipoAcessibilidade = new TipoAcessibilidade();
         tipoAcessibilidade.setTipo(dto.tipo());
-        return repository.save(tipoAcessibilidade);
+        return tipoAcessibilidadeRepository.save(tipoAcessibilidade);
     }
 
-    public List<TipoAcessibilidade> listar() {
-        return repository.findAll();
+
+    public TipoAcessibilidade atualizar(String id, TipoAcessibilidadeDTO dto) {
+        TipoAcessibilidade tipoAcessibilidade = buscarPorId(id);
+        tipoAcessibilidade.setTipo(dto.tipo());
+        return tipoAcessibilidadeRepository.save(tipoAcessibilidade);
     }
 
-    public Optional<TipoAcessibilidade> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
-
-    public TipoAcessibilidade atualizar(Long id, TipoAcessibilidadeDTO dto) {
-        return repository.findById(id).map(tipoAcessibilidade -> {
-            tipoAcessibilidade.setTipo(dto.tipo());
-            return repository.save(tipoAcessibilidade);
-        }).orElseThrow(() -> new RuntimeException("Tipo de acessibilidade não encontrado"));
-    }
-
-    public void deletar(Long id) {
-        repository.deleteById(id);
+    public void deletar(String id) {
+        TipoAcessibilidade tipoAcessibilidade = buscarPorId(id);
+        tipoAcessibilidadeRepository.delete(tipoAcessibilidade);
     }
 }

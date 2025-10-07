@@ -1,9 +1,8 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
+import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.Rota;
 import com.Grupo.ProjetoAcessibilidade.repository.RotaRepository;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,25 +12,24 @@ public class RotaService {
 
     private final RotaRepository rotaRepository;
 
-    @Autowired
     public RotaService (RotaRepository rotaRepository){
         this.rotaRepository = rotaRepository;
     }
 
-    public Rota criarRota(Rota rota) {
-        return rotaRepository.save(rota);
-    }
-
-    public List<Rota> listarTodasAsRotas() {
+    public List<Rota> listar() {
         return rotaRepository.findAll();
     }
 
-    public Rota buscarRotaPorId(Long id) {
-        return rotaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Rota não encontradaa" + id));
+    public Rota buscarPorId(String id) {
+        return rotaRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Rota não encontrada com o ID: " + id));
     }
 
-    public Rota atualizarRota(Long id, Rota rotaAtualizada) {
-        Rota rotaExistente = buscarRotaPorId(id);
+    public Rota salvar(Rota rota) {
+        return rotaRepository.save(rota);
+    }
+
+    public Rota atualizar(String id, Rota rotaAtualizada) {
+        Rota rotaExistente = buscarPorId(id);
 
         rotaExistente.setCaminho(rotaAtualizada.getCaminho());
         rotaExistente.setDuracao(rotaAtualizada.getDuracao());
@@ -40,8 +38,9 @@ public class RotaService {
         return rotaRepository.save(rotaExistente);
     }
 
-    public void deletarRota(Long id) {
-        rotaRepository.deleteById(id);
+    public void deletar(String id) {
+        Rota rotaExistente = buscarPorId(id);
+        rotaRepository.delete(rotaExistente);
     }
 }
 

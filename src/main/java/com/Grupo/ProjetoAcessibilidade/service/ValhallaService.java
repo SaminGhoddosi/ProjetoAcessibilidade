@@ -12,8 +12,11 @@ import java.util.List;
 @Service
 public class ValhallaService {
 
-    @Autowired
-    private WebClient valhallaWebClient;
+    private final WebClient valhallaWebClient;
+
+    public ValhallaService(WebClient valhallaWebClient) {
+        this.valhallaWebClient = valhallaWebClient;
+    }
 
     public Mono<String> getAcessibleRoute(LocationDTO start, LocationDTO end) {
         ValhallaRequest request = new ValhallaRequest(List.of(start, end));

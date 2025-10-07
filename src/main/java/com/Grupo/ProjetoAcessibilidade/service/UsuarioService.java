@@ -1,58 +1,76 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
 import com.Grupo.ProjetoAcessibilidade.DTO.UsuarioDTO;
+import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceAlreadyExistsException;
+import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
+import com.Grupo.ProjetoAcessibilidade.model.Papel;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.repository.UsuarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository repository;
+    private final UsuarioRepository usuarioRepository;
+    private final PapelService papelService;
 
-    @Autowired
-    public UsuarioService(UsuarioRepository repository) {
-        this.repository = repository;
+    public UsuarioService(UsuarioRepository usuarioRepository,
+                          PapelService papelService
+                          ) {
+        this.usuarioRepository = usuarioRepository;
+        this.papelService = papelService;
+    }
+
+    public List<Usuario> listar() {
+        return usuarioRepository.findAll();
+    }
+
+    public Usuario buscarPorId(String id) {
+        return usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Usuário não encontrado com ID: " + id));
     }
 
     public Usuario salvar(UsuarioDTO dto) {
+        if (usuarioRepository.existsByEmail(dto.email())) {
+            throw new ResourceAlreadyExistsException("Email já cadastrado.");
+        }
+        if (usuarioRepository.existsByCpf(dto.cpf())) {
+            throw new ResourceAlreadyExistsException("CPF já cadastrado.");
+        }
+
+        Papel papel = papelService.buscarPorId(dto.papelId());
+
         Usuario usuario = new Usuario();
         usuario.setNome(dto.nome());
         usuario.setEmail(dto.email());
         usuario.setCpf(dto.cpf());
         usuario.setDataNascimento(dto.dataNascimento());
         usuario.setTelefone(dto.telefone());
-        usuario.setSenha(dto.senha());
-        usuario.setPapel(dto.papel());
-        return repository.save(usuario);
+
+        usuario.setPapel(papel);
+
+        return usuarioRepository.save(usuario);
     }
 
-    public List<Usuario> listar() {
-        return repository.findAll();
+    public Usuario atualizar(String id, UsuarioDTO dto) {
+        Usuario usuario = buscarPorId(id);
+
+        Papel papel = papelService.buscarPorId(dto.papelId());
+
+        usuario.setNome(dto.nome());
+        usuario.setEmail(dto.email());
+        usuario.setCpf(dto.cpf());
+        usuario.setDataNascimento(dto.dataNascimento());
+        usuario.setTelefone(dto.telefone());
+        usuario.setPapel(papel);
+
+
+        return usuarioRepository.save(usuario);
     }
 
-    public Optional<Usuario> buscarPorId(Long id) {
-        return repository.findById(id);
-    }
-
-    public Usuario atualizar(Long id, UsuarioDTO dto) {
-        return repository.findById(id).map(usuario -> {
-            usuario.setNome(dto.nome());
-            usuario.setEmail(dto.email());
-            usuario.setCpf(dto.cpf());
-            usuario.setDataNascimento(dto.dataNascimento());
-            usuario.setTelefone(dto.telefone());
-            usuario.setSenha(dto.senha());
-            usuario.setPapel(dto.papel());
-            return repository.save(usuario);
-        }).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-    }
-
-    public void deletar(Long id) {
-        repository.deleteById(id);
+    public void deletar(String id) {
+        Usuario usuario = buscarPorId(id);
+        usuarioRepository.delete(usuario);
     }
 }

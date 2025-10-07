@@ -1,22 +1,23 @@
 package com.Grupo.ProjetoAcessibilidade.model;
 
-import jakarta.persistence.*;
+
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@Entity
-@Table(name = "ponto")
+@Document(collection = "pontos")
 public class Ponto {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String nome;
-    private String latitude;
-    private String longitude;
+    private double latitude;
+    private double longitude;
 
-    @ManyToOne
-    @JoinColumn(name = "rota_id")
+    @DBRef
     private Rota rota;
 
 }
