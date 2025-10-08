@@ -51,3 +51,4 @@ public class TipoAcessibilidadeController {
         return ResponseEntity.noContent().build();
     }
 }
+//alterado
