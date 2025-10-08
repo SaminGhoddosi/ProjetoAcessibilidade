@@ -1,5 +1,7 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
+import com.Grupo.ProjetoAcessibilidade.dto.LoginRequestDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.LoginResponseDTO;
 import com.Grupo.ProjetoAcessibilidade.dto.UsuarioDTO;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceAlreadyExistsException;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
@@ -9,6 +11,7 @@ import com.Grupo.ProjetoAcessibilidade.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UsuarioService {
@@ -27,7 +30,7 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
-    public Usuario buscarPorId(String id) {
+    public  Usuario buscarPorId(String id) {
         return usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFound("Usuário não encontrado com ID: " + id));
     }
 
@@ -47,7 +50,7 @@ public class UsuarioService {
         usuario.setCpf(dto.cpf());
         usuario.setDataNascimento(dto.dataNascimento());
         usuario.setTelefone(dto.telefone());
-
+        usuario.setSenha((dto.senha()));
         usuario.setPapel(papel);
 
         return usuarioRepository.save(usuario);
@@ -72,5 +75,28 @@ public class UsuarioService {
     public void deletar(String id) {
         Usuario usuario = buscarPorId(id);
         usuarioRepository.delete(usuario);
+    }
+    public LoginResponseDTO login(LoginRequestDTO loginRequest) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.email());
+
+        if (usuarioOpt.isEmpty()) {
+            return new LoginResponseDTO(null,"Usuário não encontrado");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+
+        if (!usuario.getSenha().equals(loginRequest.senha())) {
+            return new LoginResponseDTO(null, "Senha incorreta");
+        }
+
+
+
+        String token = gerarToken(usuario);
+
+        return new LoginResponseDTO(token, "Login realizado com sucesso");
+    }
+
+    private String gerarToken(Usuario usuario) {
+        return "token-" + usuario.getId() + "-" + System.currentTimeMillis();
     }
 }
