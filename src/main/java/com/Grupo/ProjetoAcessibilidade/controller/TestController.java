@@ -1,6 +1,6 @@
 package com.Grupo.ProjetoAcessibilidade.controller;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.LocationDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.LocationDTO;
 import com.Grupo.ProjetoAcessibilidade.service.ValhallaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

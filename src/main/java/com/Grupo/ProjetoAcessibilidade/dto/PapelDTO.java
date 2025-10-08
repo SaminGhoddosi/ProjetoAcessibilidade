@@ -1,4 +1,4 @@
-package com.Grupo.ProjetoAcessibilidade.DTO;
+package com.Grupo.ProjetoAcessibilidade.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

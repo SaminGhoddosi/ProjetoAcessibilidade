@@ -1,16 +1,14 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.FeedbackDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.FeedbackDTO;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.Feedback;
 import com.Grupo.ProjetoAcessibilidade.model.PontosAcessibilidade;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.repository.FeedbackRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FeedbackService {

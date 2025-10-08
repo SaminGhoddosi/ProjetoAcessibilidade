@@ -1,6 +1,6 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.UsuarioDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.UsuarioDTO;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceAlreadyExistsException;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.Papel;

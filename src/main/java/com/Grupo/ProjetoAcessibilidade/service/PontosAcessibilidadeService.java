@@ -1,6 +1,6 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.PontosAcessibilidadeDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.PontosAcessibilidadeDTO;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.*;
 import com.Grupo.ProjetoAcessibilidade.repository.PontosAcessibilidadeRepository;

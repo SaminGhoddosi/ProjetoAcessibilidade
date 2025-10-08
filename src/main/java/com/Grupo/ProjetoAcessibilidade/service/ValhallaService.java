@@ -1,8 +1,7 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.LocationDTO;
-import com.Grupo.ProjetoAcessibilidade.DTO.ValhallaRequest;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.Grupo.ProjetoAcessibilidade.dto.LocationDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.ValhallaRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;

@@ -1,4 +1,4 @@
-package com.Grupo.ProjetoAcessibilidade.DTO;
+package com.Grupo.ProjetoAcessibilidade.dto;
 
 public record LocationDTO(double lat, double lon, String type) {
     public LocationDTO(double lat, double lon) {

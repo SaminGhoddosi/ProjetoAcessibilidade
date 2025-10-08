@@ -1,6 +1,4 @@
-package com.Grupo.ProjetoAcessibilidade.DTO;
-import com.Grupo.ProjetoAcessibilidade.DTO.CostingOptionsDTO;
-import com.Grupo.ProjetoAcessibilidade.DTO.LocationDTO;
+package com.Grupo.ProjetoAcessibilidade.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 

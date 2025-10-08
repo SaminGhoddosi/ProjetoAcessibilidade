@@ -1,6 +1,6 @@
 package com.Grupo.ProjetoAcessibilidade.controller;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.PontoDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.PontoDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Ponto;
 import com.Grupo.ProjetoAcessibilidade.service.PontoService;
 import jakarta.validation.Valid;

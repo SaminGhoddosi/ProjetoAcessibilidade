@@ -1,6 +1,6 @@
 package com.Grupo.ProjetoAcessibilidade.controller;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.FeedbackDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.FeedbackDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Feedback;
 import com.Grupo.ProjetoAcessibilidade.service.FeedbackService;
 import jakarta.validation.Valid;

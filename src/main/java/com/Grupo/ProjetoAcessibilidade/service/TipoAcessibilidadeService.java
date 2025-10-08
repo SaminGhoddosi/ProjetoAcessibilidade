@@ -1,14 +1,12 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.TipoAcessibilidadeDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.TipoAcessibilidadeDTO;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.TipoAcessibilidade;
 import com.Grupo.ProjetoAcessibilidade.repository.TipoAcessibilidadeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TipoAcessibilidadeService {

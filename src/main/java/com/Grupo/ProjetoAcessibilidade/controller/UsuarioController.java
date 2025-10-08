@@ -1,6 +1,6 @@
 package com.Grupo.ProjetoAcessibilidade.controller;
 
-import com.Grupo.ProjetoAcessibilidade.DTO.UsuarioDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.UsuarioDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.service.UsuarioService;
 import jakarta.validation.Valid;
