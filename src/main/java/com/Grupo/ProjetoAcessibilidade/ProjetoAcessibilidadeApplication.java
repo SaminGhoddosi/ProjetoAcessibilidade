@@ -14,14 +14,14 @@ public class ProjetoAcessibilidadeApplication {
 	public static void main(String[] args) {
         SpringApplication.run(ProjetoAcessibilidadeApplication.class, args);
 
-       /* RestTemplate restTemplate = new RestTemplate();
+     /*   RestTemplate restTemplate = new RestTemplate();
         String valhallaUrl = "http://localhost:8002/route";
 
         //para a criação de uma mapa representando o json
         Map<String, Object> requestBody = new HashMap<>();
 
         List<Map<String, Double>> locations = List.of(
-                Map.of("lat", -26.9169, "lon", -49.0719),
+                Map.of("lat", -26.9194, "lon", -49.0661),
                 Map.of("lat", -26.9189, "lon", -49.0652)
         );
 
