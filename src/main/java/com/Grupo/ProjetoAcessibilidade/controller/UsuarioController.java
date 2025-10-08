@@ -1,5 +1,7 @@
 package com.Grupo.ProjetoAcessibilidade.controller;
 
+import com.Grupo.ProjetoAcessibilidade.dto.LoginRequestDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.LoginResponseDTO;
 import com.Grupo.ProjetoAcessibilidade.dto.UsuarioDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.service.UsuarioService;
@@ -48,5 +50,16 @@ public class UsuarioController {
     public ResponseEntity<Void> deletar(@PathVariable String id) {
         usuarioService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+    // Endpoint para login
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
+        LoginResponseDTO response = usuarioService.login(loginRequest);
+
+        if (response.token() == null) {
+            return ResponseEntity.status(401).body(response);
+        }
+
+        return ResponseEntity.ok(response);
     }
 }

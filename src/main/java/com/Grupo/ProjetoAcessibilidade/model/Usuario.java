@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,13 +23,15 @@ public class Usuario {
 
     private String nome;
 
+
+
     @Indexed(unique = true)
     private String email;
 
     @Indexed(unique = true)
     private String cpf;
 
-    private LocalDateTime dataNascimento;
+    private LocalDate dataNascimento;
 
     private String telefone;
 
