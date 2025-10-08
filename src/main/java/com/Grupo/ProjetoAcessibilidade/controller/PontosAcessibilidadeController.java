@@ -1,48 +1,53 @@
 package com.Grupo.ProjetoAcessibilidade.controller;
 
 import com.Grupo.ProjetoAcessibilidade.DTO.PontosAcessibilidadeDTO;
+import com.Grupo.ProjetoAcessibilidade.model.Ponto;
 import com.Grupo.ProjetoAcessibilidade.model.PontosAcessibilidade;
 import com.Grupo.ProjetoAcessibilidade.service.PontosAcessibilidadeService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/pontos-acessibilidade")
 public class PontosAcessibilidadeController {
 
-    private final PontosAcessibilidadeService service;
+    private final PontosAcessibilidadeService pontosAcessibilidadeService;
 
-    public PontosAcessibilidadeController(PontosAcessibilidadeService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public ResponseEntity<PontosAcessibilidade> criar(@RequestBody PontosAcessibilidadeDTO dto) {
-        return ResponseEntity.ok(service.salvar(dto));
+    public PontosAcessibilidadeController(PontosAcessibilidadeService pontosAcessibilidadeService) {
+        this.pontosAcessibilidadeService = pontosAcessibilidadeService;
     }
 
     @GetMapping
     public ResponseEntity<List<PontosAcessibilidade>> listar() {
-        return ResponseEntity.ok(service.listar());
+        return ResponseEntity.ok(pontosAcessibilidadeService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PontosAcessibilidade> buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PontosAcessibilidade> buscarPorId(@PathVariable String id) {
+        return ResponseEntity.ok(pontosAcessibilidadeService.buscarPorId(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<PontosAcessibilidade> criar(@Valid @RequestBody PontosAcessibilidadeDTO dto) {
+        PontosAcessibilidade ponto = pontosAcessibilidadeService.salvar(dto);
+        return ResponseEntity
+                .created(URI.create("/pontosAcessibilidade/" + ponto.getId()))
+                .body(ponto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PontosAcessibilidade> atualizar(@PathVariable Long id, @RequestBody PontosAcessibilidadeDTO dto) {
-        return ResponseEntity.ok(service.atualizar(id, dto));
+    public ResponseEntity<PontosAcessibilidade> atualizar(@PathVariable String id,
+                                                          @Valid @RequestBody PontosAcessibilidadeDTO dto) {
+        return ResponseEntity.ok(pontosAcessibilidadeService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.deletar(id);
+    public ResponseEntity<Void> deletar(@PathVariable String id) {
+        pontosAcessibilidadeService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 }

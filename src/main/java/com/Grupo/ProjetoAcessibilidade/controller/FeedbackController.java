@@ -3,46 +3,52 @@ package com.Grupo.ProjetoAcessibilidade.controller;
 import com.Grupo.ProjetoAcessibilidade.DTO.FeedbackDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Feedback;
 import com.Grupo.ProjetoAcessibilidade.service.FeedbackService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/feedbacks")
 public class FeedbackController {
 
-    private final FeedbackService service;
+    private final FeedbackService feedbackService;
 
-    public FeedbackController(FeedbackService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public ResponseEntity<Feedback> criar(@RequestBody FeedbackDTO dto) {
-        return ResponseEntity.ok(service.salvar(dto));
+    public FeedbackController(FeedbackService feedbackService) {
+        this.feedbackService = feedbackService;
     }
 
     @GetMapping
     public ResponseEntity<List<Feedback>> listar() {
-        return ResponseEntity.ok(service.listar());
+        return ResponseEntity.ok(feedbackService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Feedback> buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Feedback> buscarPorId(@PathVariable String id) {
+        return ResponseEntity.ok(feedbackService.buscarPorId(id));
     }
 
+
+    @PostMapping
+    public ResponseEntity<Feedback> criar(@Valid @RequestBody FeedbackDTO dto) {
+        Feedback feedback = feedbackService.salvar(dto);
+        return ResponseEntity
+                .created(URI.create("/feedbacks/" + feedback.getId()))
+                .body(feedback);
+    }
+
+
     @PutMapping("/{id}")
-    public ResponseEntity<Feedback> atualizar(@PathVariable Long id, @RequestBody FeedbackDTO dto) {
-        return ResponseEntity.ok(service.atualizar(id, dto));
+    public ResponseEntity<Feedback> atualizar(@PathVariable String id,
+                                              @Valid @RequestBody FeedbackDTO dto) {
+        return ResponseEntity.ok(feedbackService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.deletar(id);
+    public ResponseEntity<Void> deletar(@PathVariable String id) {
+        feedbackService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 }

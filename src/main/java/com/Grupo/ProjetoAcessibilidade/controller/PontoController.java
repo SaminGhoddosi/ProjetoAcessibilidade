@@ -3,46 +3,50 @@ package com.Grupo.ProjetoAcessibilidade.controller;
 import com.Grupo.ProjetoAcessibilidade.DTO.PontoDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Ponto;
 import com.Grupo.ProjetoAcessibilidade.service.PontoService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/pontos")
 public class PontoController {
 
-    private final PontoService service;
+    private final PontoService pontoService;
 
-    public PontoController(PontoService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public ResponseEntity<Ponto> criar(@RequestBody PontoDTO dto) {
-        return ResponseEntity.ok(service.salvar(dto));
+    public PontoController(PontoService pontoService) {
+        this.pontoService = pontoService;
     }
 
     @GetMapping
     public ResponseEntity<List<Ponto>> listar() {
-        return ResponseEntity.ok(service.listar());
+        return ResponseEntity.ok(pontoService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Ponto> buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Ponto> buscarPorId(@PathVariable String id) {
+        return ResponseEntity.ok(pontoService.buscarPorId(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Ponto> criar(@Valid @RequestBody PontoDTO dto) {
+        Ponto ponto = pontoService.salvar(dto);
+        return ResponseEntity
+                .created(URI.create("/pontos/" + ponto.getId()))
+                .body(ponto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ponto> atualizar(@PathVariable Long id, @RequestBody PontoDTO dto) {
-        return ResponseEntity.ok(service.atualizar(id, dto));
+    public ResponseEntity<Ponto> atualizar(@PathVariable String id,
+                                           @Valid @RequestBody PontoDTO dto) {
+        return ResponseEntity.ok(pontoService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.deletar(id);
+    public ResponseEntity<Void> deletar(@PathVariable String id) {
+        pontoService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 }

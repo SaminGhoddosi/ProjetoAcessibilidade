@@ -3,11 +3,13 @@ package com.Grupo.ProjetoAcessibilidade.controller;
 import com.Grupo.ProjetoAcessibilidade.model.Rota;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.service.RotaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -21,32 +23,35 @@ public class RotaController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Rota>> listarRotas() {
-        List<Rota> rotas = rotaService.listarTodasAsRotas();
+    public ResponseEntity<List<Rota>> listar() {
+        List<Rota> rotas = rotaService.listar();
         return ResponseEntity.ok(rotas);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Rota> buscarRotaPorId(@PathVariable Long id) {
-        Rota rota = rotaService.buscarRotaPorId(id);
+    public ResponseEntity<Rota> buscarPorId(@PathVariable String id) {
+        Rota rota = rotaService.buscarPorId(id);
         return ResponseEntity.ok(rota);
     }
 
     @PostMapping
-    public ResponseEntity<Rota> criarRota(@RequestBody Rota rota) {
-        Rota novaRota = rotaService.criarRota(rota);
-        return new ResponseEntity<>(novaRota, HttpStatus.CREATED);
+    public ResponseEntity<Rota> criar(@Valid @RequestBody Rota rota) {
+        Rota novaRota = rotaService.salvar(rota);
+        return ResponseEntity
+                .created(URI.create("/rotas/" + novaRota.getId()))
+                .body(novaRota);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Rota> atualizarRota(@PathVariable Long id, @RequestBody Rota rotaDetalhes) {
-        Rota rotaAtualizada = rotaService.atualizarRota(id, rotaDetalhes);
+    public ResponseEntity<Rota> atualizar(@PathVariable String id,
+                                          @Valid @RequestBody Rota rotaDetalhes) {
+        Rota rotaAtualizada = rotaService.atualizar(id, rotaDetalhes);
         return ResponseEntity.ok(rotaAtualizada);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarRota(@PathVariable Long id) {
-        rotaService.deletarRota(id);
+    public ResponseEntity<Void> deletar(@PathVariable String id) {
+        rotaService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 

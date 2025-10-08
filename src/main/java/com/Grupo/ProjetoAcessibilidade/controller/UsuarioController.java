@@ -3,46 +3,50 @@ package com.Grupo.ProjetoAcessibilidade.controller;
 import com.Grupo.ProjetoAcessibilidade.DTO.UsuarioDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.service.UsuarioService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-    private final UsuarioService service;
+    private final UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioService service) {
-        this.service = service;
-    }
-
-    @PostMapping
-    public ResponseEntity<Usuario> criar(@RequestBody UsuarioDTO dto) {
-        return ResponseEntity.ok(service.salvar(dto));
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping
     public ResponseEntity<List<Usuario>> listar() {
-        return ResponseEntity.ok(service.listar());
+        return ResponseEntity.ok(usuarioService.listar());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
-        return service.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Usuario> buscarPorId(@PathVariable String id) {
+        return ResponseEntity.ok(usuarioService.buscarPorId(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Usuario> criar(@Valid @RequestBody UsuarioDTO dto) {
+        Usuario usuario = usuarioService.salvar(dto);
+        return ResponseEntity
+                .created(URI.create("/usuarios/" + usuario.getId()))
+                .body(usuario);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody UsuarioDTO dto) {
-        return ResponseEntity.ok(service.atualizar(id, dto));
+    public ResponseEntity<Usuario> atualizar(@PathVariable String id,
+                                             @Valid @RequestBody UsuarioDTO dto) {
+        return ResponseEntity.ok(usuarioService.atualizar(id, dto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        service.deletar(id);
+    public ResponseEntity<Void> deletar(@PathVariable String id) {
+        usuarioService.deletar(id);
         return ResponseEntity.noContent().build();
     }
 }
