@@ -17,8 +17,6 @@ public class Rota {
     @Id
     private String id;
 
-    private String caminho;
-
     private String duracao;
 
     private String distancia;
@@ -27,6 +25,11 @@ public class Rota {
     @Field("criado_em")
     private LocalDateTime criadoEm;
 
-    private List<Ponto> pontos = new ArrayList<>();
+    private List<Ponto> caminho = new ArrayList<>();
 
+    //private String caminho;
+
+    private Ponto origem;
+
+    private Ponto destino;
 }

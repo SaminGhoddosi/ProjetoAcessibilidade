@@ -1,5 +1,7 @@
 package com.Grupo.ProjetoAcessibilidade.controller;
 
+import com.Grupo.ProjetoAcessibilidade.dto.PontoDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.RotaDTO;
 import com.Grupo.ProjetoAcessibilidade.model.Rota;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.service.RotaService;
@@ -35,8 +37,8 @@ public class RotaController {
     }
 
     @PostMapping
-    public ResponseEntity<Rota> criar(@Valid @RequestBody Rota rota) {
-        Rota novaRota = rotaService.salvar(rota);
+    public ResponseEntity<Rota> criar(@Valid @RequestBody RotaDTO dto) {
+        Rota novaRota = rotaService.salvar(dto);
         return ResponseEntity
                 .created(URI.create("/rotas/" + novaRota.getId()))
                 .body(novaRota);
@@ -44,8 +46,8 @@ public class RotaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Rota> atualizar(@PathVariable String id,
-                                          @Valid @RequestBody Rota rotaDetalhes) {
-        Rota rotaAtualizada = rotaService.atualizar(id, rotaDetalhes);
+                                          @Valid @RequestBody RotaDTO dto) {
+        Rota rotaAtualizada = rotaService.atualizar(id, dto);
         return ResponseEntity.ok(rotaAtualizada);
     }
 
