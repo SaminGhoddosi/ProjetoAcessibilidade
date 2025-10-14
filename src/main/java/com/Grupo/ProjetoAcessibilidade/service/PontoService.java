@@ -28,7 +28,6 @@ public class PontoService {
 
     public Ponto salvar(PontoDTO dto) {
         Ponto ponto = new Ponto();
-        ponto.setNome(dto.nome());
         ponto.setLatitude(dto.latitude());
         ponto.setLongitude(dto.longitude());
         return repository.save(ponto);
@@ -37,7 +36,6 @@ public class PontoService {
     public Ponto atualizar(String id, PontoDTO dto) {
         Ponto pontoExistente = buscarPorId(id);
 
-        pontoExistente.setNome(dto.nome());
         pontoExistente.setLatitude(dto.latitude());
         pontoExistente.setLongitude(dto.longitude());
 

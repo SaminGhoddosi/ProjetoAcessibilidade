@@ -1,16 +1,22 @@
 package com.Grupo.ProjetoAcessibilidade.dto;
 
+import com.Grupo.ProjetoAcessibilidade.model.Ponto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record PontoDTO(
-        @NotBlank(message = "O nome não pode estar em branco.")
-        String nome,
+        @JsonProperty("lat") double latitude,
+        @JsonProperty("lon") double longitude
+) {
+    public static PontoDTO fromPonto(Ponto ponto) {
+        return new PontoDTO(ponto.getLatitude(), ponto.getLongitude());
+    }
 
-        @NotNull(message = "A latitude é obrigatória.")
-        double latitude,
-
-        @NotNull(message = "A longitude é obrigatória.")
-        double longitude) {
-
+    public Ponto toPonto() {
+        Ponto ponto = new Ponto();
+        ponto.setLatitude(this.latitude);
+        ponto.setLongitude(this.longitude);
+        return ponto;
+    }
 }
