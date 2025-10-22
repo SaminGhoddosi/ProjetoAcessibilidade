@@ -13,6 +13,5 @@ public class RotasFavoritasDTO {
 
     private String id;
     private String rotaId;
-    private String caminho;
     private LocalDateTime criadoEm;
 }
