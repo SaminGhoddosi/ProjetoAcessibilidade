@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Rota Acessível</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        label, input, button { display: block; margin-bottom: 10px; }
+        #resultado { margin-top: 20px; border: 1px solid #ccc; padding: 10px; white-space: pre-wrap; /* Para mostrar o JSON formatado */ }
+    </style>
+</head>
+<body>
+<h1>Calcular Rota Acessível</h1>
+
+<label for="latInicio">Latitude Início:</label>
+<input type="text" id="latInicio" value="-26.9194"> <label for="lonInicio">Longitude Início:</label>
+<input type="text" id="lonInicio" value="-49.0661">
+
+<label for="latFim">Latitude Fim:</label>
+<input type="text" id="latFim" value="-26.9189"> <label for="lonFim">Longitude Fim:</label>
+<input type="text" id="lonFim" value="-49.0652">
+
+<label for="perfil">Perfil:</label>
+<select id="perfil">
+    <option value="PADRAO">Padrão</option>
+    <option value="CADEIRANTE">Cadeirante</option>
+    <option value="IDOSO">Idoso</option>
+</select>
+
+<input type="hidden" id="usuarioId" value="1"> <button id="calcularBtn">Calcular Rota</button>
+
+<h2>Resultado:</h2>
+<div id="resultado">Aguardando cálculo...</div>
+
+<script src="script.js"></script>
+</body>
+</html>

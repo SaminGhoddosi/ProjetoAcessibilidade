@@ -55,7 +55,7 @@ public class RotasFavoritasService {
         return new RotasFavoritasDTO(
                 favorita.getId(),
                 favorita.getRota().getId(),
-                favorita.getRota().getCaminho(),
+                favorita.getRota().getCaminho().toString(),
                 favorita.getRota().getCriadoEm()
         );
     }

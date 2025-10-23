@@ -20,8 +20,8 @@ public class TestController {
     @GetMapping("/test-acessibilidade")
     public Mono<ResponseEntity<String>> testRoute() {
 
-        Ponto start = new PontoDTO(-26.917070427788904, -49.071228808912174).toPonto();
-        Ponto end = new PontoDTO(-26.917364182605645, -49.07095833737201).toPonto();
+        Ponto start = new PontoDTO("Inicio Teste", -26.917070427788904, -49.071228808912174).toPonto(); // <-- CORRIGIDO
+        Ponto end = new PontoDTO("Fim Teste", -26.917364182605645, -49.07095833737201).toPonto();
 
         System.out.println("Endpoint /test-acessibilidade foi chamado!");
 

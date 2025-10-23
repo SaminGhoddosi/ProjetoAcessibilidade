@@ -6,11 +6,15 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record PontoDTO(
+        String nome,
         @JsonProperty("lat") double latitude,
         @JsonProperty("lon") double longitude
 ) {
     public static PontoDTO fromPonto(Ponto ponto) {
-        return new PontoDTO(ponto.getLatitude(), ponto.getLongitude());
+        if (ponto == null) {
+            return null;
+        }
+        return new PontoDTO(ponto.getNome(), ponto.getLatitude(), ponto.getLongitude());
     }
 
     public Ponto toPonto() {

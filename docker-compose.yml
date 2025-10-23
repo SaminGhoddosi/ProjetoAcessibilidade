@@ -6,7 +6,9 @@ services:
     ports:
       - "8002:8002"
     volumes:
+      - ./valhalla_data/osm_data:/data
       - ./valhalla_tiles:/custom_files
+      - ./valhalla_config/valhalla.json:/etc/valhalla.json
     environment:
       # Esta linha diz ao script para usar o arquivo local que baixamos
       - pbf_path=/custom_files/blumenau.osm.pbf
