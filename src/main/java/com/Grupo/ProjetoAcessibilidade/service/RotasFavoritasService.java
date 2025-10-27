@@ -31,7 +31,9 @@ public class RotasFavoritasService {
                 .orElseThrow(() -> new RuntimeException("Rota não encontrada"));
 
         rotasFavoritasRepository.findByUsuarioAndRotaId(usuario, rotaId)
-                .ifPresent(f -> { throw new RuntimeException("Rota já favoritada por este usuário"); });
+                .ifPresent(f -> {
+                    throw new RuntimeException("Rota já favoritada por este usuário");
+                });
 
         RotasFavoritas favorita = new RotasFavoritas();
         favorita.setUsuario(usuario);
@@ -55,8 +57,9 @@ public class RotasFavoritasService {
         return new RotasFavoritasDTO(
                 favorita.getId(),
                 favorita.getRota().getId(),
-                favorita.getRota().getCaminho(),
+                favorita.getRota().getCaminho().toString(),
                 favorita.getRota().getCriadoEm()
         );
     }
 }
+

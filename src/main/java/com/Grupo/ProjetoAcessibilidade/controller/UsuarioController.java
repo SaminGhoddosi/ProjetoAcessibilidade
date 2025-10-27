@@ -51,15 +51,4 @@ public class UsuarioController {
         usuarioService.deletar(id);
         return ResponseEntity.noContent().build();
     }
-    // Endpoint para login
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequest) {
-        LoginResponseDTO response = usuarioService.login(loginRequest);
-
-        if (response.token() == null) {
-            return ResponseEntity.status(401).body(response);
-        }
-
-        return ResponseEntity.ok(response);
-    }
 }

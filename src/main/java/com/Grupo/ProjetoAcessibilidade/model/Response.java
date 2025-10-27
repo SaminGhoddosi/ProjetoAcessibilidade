@@ -13,5 +13,5 @@ public class Response<T> {
     private List<String> errors;
     private LocalDateTime timestamp;
     private String path;
-    private Integer errorCode;  // 👈 novo campo
+    private Integer errorCode;
 }

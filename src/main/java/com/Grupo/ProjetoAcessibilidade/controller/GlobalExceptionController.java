@@ -15,11 +15,11 @@ import java.util.List;
 @RestControllerAdvice
 public class GlobalExceptionController {
 
-//    @ExceptionHandler(RuntimeException.class)
-//    public ResponseEntity<Response<Object>> handleRuntimeException(RuntimeException ex) {
-//        Response<Object> body = ResponseUtil.error("Ocorreu um erro inesperado", "Erro", 1001);
-//        return ResponseEntity.status(500).body(body);
-//    }
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Response<Object>> handleRuntimeException(RuntimeException ex) {
+        Response<Object> body = ResponseUtil.error("Ocorreu um erro inesperado", "Erro", 1001);
+        return ResponseEntity.status(500).body(body);
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Response<Object>> handleIllegalArgumentException(IllegalArgumentException ex) {

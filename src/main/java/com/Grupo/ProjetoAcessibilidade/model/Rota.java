@@ -27,7 +27,7 @@ public class Rota {
 
     private List<Ponto> caminho = new ArrayList<>();
 
-    //private String caminho;
+//    private String caminho;
 
     private Ponto origem;
 

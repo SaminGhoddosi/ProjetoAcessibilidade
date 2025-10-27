@@ -8,6 +8,8 @@ import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.Papel;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
 import com.Grupo.ProjetoAcessibilidade.repository.UsuarioRepository;
+import com.Grupo.ProjetoAcessibilidade.security.JwtUtil;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +20,17 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PapelService papelService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     public UsuarioService(UsuarioRepository usuarioRepository,
-                          PapelService papelService
-                          ) {
+                          PapelService papelService,
+                          PasswordEncoder passwordEncoder,
+                          JwtUtil jwtUtil) {
         this.usuarioRepository = usuarioRepository;
         this.papelService = papelService;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     public List<Usuario> listar() {
@@ -50,12 +57,11 @@ public class UsuarioService {
         usuario.setCpf(dto.cpf());
         usuario.setDataNascimento(dto.dataNascimento());
         usuario.setTelefone(dto.telefone());
-        usuario.setSenha((dto.senha()));
+        usuario.setSenha(passwordEncoder.encode(dto.senha()));
         usuario.setPapel(papel);
 
         return usuarioRepository.save(usuario);
     }
-
     public Usuario atualizar(String id, UsuarioDTO dto) {
         Usuario usuario = buscarPorId(id);
 
@@ -75,28 +81,5 @@ public class UsuarioService {
     public void deletar(String id) {
         Usuario usuario = buscarPorId(id);
         usuarioRepository.delete(usuario);
-    }
-    public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByEmail(loginRequest.email());
-
-        if (usuarioOpt.isEmpty()) {
-            return new LoginResponseDTO(null,"Usuário não encontrado");
-        }
-
-        Usuario usuario = usuarioOpt.get();
-
-        if (!usuario.getSenha().equals(loginRequest.senha())) {
-            return new LoginResponseDTO(null, "Senha incorreta");
-        }
-
-
-
-        String token = gerarToken(usuario);
-
-        return new LoginResponseDTO(token, "Login realizado com sucesso");
-    }
-
-    private String gerarToken(Usuario usuario) {
-        return "token-" + usuario.getId() + "-" + System.currentTimeMillis();
     }
 }

@@ -14,7 +14,7 @@ public class ProjetoAcessibilidadeApplication {
 	public static void main(String[] args) {
         SpringApplication.run(ProjetoAcessibilidadeApplication.class, args);
 
-     /*   RestTemplate restTemplate = new RestTemplate();
+       RestTemplate restTemplate = new RestTemplate();
         String valhallaUrl = "http://localhost:8002/route";
 
         //para a criação de uma mapa representando o json
@@ -60,7 +60,7 @@ public class ProjetoAcessibilidadeApplication {
             System.out.println("\n--- OCORREU UM ERRO ---");
             System.out.println("Não foi possível conectar ao Valhalla. Verifique se o Docker está rodando.");
             e.printStackTrace();
-        }*/
+        }
     }
 }
 

@@ -9,14 +9,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
-    // Pega a URL do seu arquivo application.properties
     @Value("${valhalla.api.url}")
     private String valhallaBaseUrl;
 
     @Bean
     public WebClient valhallaWebClient() {
         return WebClient.builder()
-                .baseUrl(valhallaBaseUrl) // Usa a URL configurada
+                .baseUrl(valhallaBaseUrl)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
                 .build();
     }
