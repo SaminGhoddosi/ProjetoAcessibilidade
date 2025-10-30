@@ -5,10 +5,12 @@ import com.Grupo.ProjetoAcessibilidade.model.Ponto;
 import com.Grupo.ProjetoAcessibilidade.service.ValhallaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+@CrossOrigin(origins = "*")
 // 1. @RestController: Anotação que transforma esta classe em um Controller de API.
 @RestController
 public class TestController {

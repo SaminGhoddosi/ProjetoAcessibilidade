@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 // Este DTO representa os dados que o frontend enviará para /rotas/calcular
 public record CalcularRotaDTO(
-        @NotNull Long usuarioId, // ID do usuário que está pedindo a rota
+        @NotNull String usuarioId, // ID do usuário que está pedindo a rota
         @NotNull String perfil, // "PADRAO", "CADEIRANTE", "IDOSO"
         @NotNull @Valid CoordenadasDTO coordenadas // Objeto com lat/lon de início e fim
 ) {

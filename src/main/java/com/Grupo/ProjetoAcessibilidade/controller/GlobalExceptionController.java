@@ -6,12 +6,13 @@ import com.Grupo.ProjetoAcessibilidade.model.Response;
 import com.Grupo.ProjetoAcessibilidade.utils.ResponseUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.List;
 
-
+@CrossOrigin(origins = "*")
 @RestControllerAdvice
 public class GlobalExceptionController {
 

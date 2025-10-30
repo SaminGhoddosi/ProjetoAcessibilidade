@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
@@ -62,4 +63,6 @@ public class UsuarioController {
 
         return ResponseEntity.ok(response);
     }
+
+
 }

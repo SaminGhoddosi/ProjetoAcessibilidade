@@ -130,7 +130,7 @@ public class RotaService {
         return path;
     }
 
-    public Mono<String> calcularRotaAcessivel(Long usuarioIdLong, String perfil, CalcularRotaDTO.CoordenadasDTO coordenadas) throws RuntimeException {
+    public Mono<String> calcularRotaAcessivel(String usuarioIdLong, String perfil, CalcularRotaDTO.CoordenadasDTO coordenadas) throws RuntimeException {
 
         System.out.println("RotaService: Iniciando cálculo para Usuario ID (Long): " + usuarioIdLong + ", Perfil: " + perfil);
 

@@ -69,6 +69,17 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
 
+            <dependency>
+                <groupId>org.openstreetmap.osmosis</groupId>
+                <artifactId>osmosis-core</artifactId>
+                <version>0.48.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.openstreetmap.osmosis</groupId>
+                <artifactId>osmosis-pbf</artifactId>
+                <version>0.48.3</version>
+            </dependency>
+
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

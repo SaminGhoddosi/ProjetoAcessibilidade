@@ -3,35 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Rota Acessível</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        label, input, button { display: block; margin-bottom: 10px; }
-        #resultado { margin-top: 20px; border: 1px solid #ccc; padding: 10px; white-space: pre-wrap; /* Para mostrar o JSON formatado */ }
-    </style>
+    <title>Rotas Acessíveis</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Calcular Rota Acessível</h1>
+<main>
+    <h1>Rotas Acessíveis</h1>
+    <p>Encontre o melhor caminho para seu destino.</p>
 
-<label for="latInicio">Latitude Início:</label>
-<input type="text" id="latInicio" value="-26.9194"> <label for="lonInicio">Longitude Início:</label>
-<input type="text" id="lonInicio" value="-49.0661">
+    <form id="form-rota">
 
-<label for="latFim">Latitude Fim:</label>
-<input type="text" id="latFim" value="-26.9189"> <label for="lonFim">Longitude Fim:</label>
-<input type="text" id="lonFim" value="-49.0652">
+        <div class="form-group">
+            <label for="ponto-partida">De onde você sai?</label>
+            <div class="autocomplete-wrapper">
+                <input type="text" id="ponto-partida" placeholder="Ex: Prefeitura de Blumenau" required autocomplete="off">
+                <div class="autocomplete-items-container" id="partida-sugestoes"></div>
+            </div>
+        </div>
 
-<label for="perfil">Perfil:</label>
-<select id="perfil">
-    <option value="PADRAO">Padrão</option>
-    <option value="CADEIRANTE">Cadeirante</option>
-    <option value="IDOSO">Idoso</option>
-</select>
+        <div class="form-group">
+            <label for="ponto-destino">Para onde você vai?</label>
+            <div class="autocomplete-wrapper">
+                <input type="text" id="ponto-destino" placeholder="Ex: Rua Ingo Hering, 20" required autocomplete="off">
+                <div class="autocomplete-items-container" id="destino-sugestoes"></div>
+            </div>
+        </div>
 
-<input type="hidden" id="usuarioId" value="1"> <button id="calcularBtn">Calcular Rota</button>
+        <div class="form-group">
+            <label for="perfil-usuario">Qual seu perfil de locomoção?</label>
+            <select id="perfil-usuario">
+                <option value="pedestrian">Pedestre (Padrão)</option>
+                <option value="wheelchair">Cadeirante</option>
+                <option value="pedestrian_avoid_stairs">Idoso (Evitar escadas)</option>
+            </select>
+        </div>
+        <button type="submit" id="btn-buscar-rota">Buscar Rota</button>
+    </form>
 
-<h2>Resultado:</h2>
-<div id="resultado">Aguardando cálculo...</div>
+    <div id="map"></div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script src="script.js"></script>
 </body>

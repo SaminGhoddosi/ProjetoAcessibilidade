@@ -18,6 +18,7 @@ import java.net.URI;
 import java.time.Duration;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/rotas")
 public class RotaController {
@@ -44,7 +45,7 @@ public class RotaController {
     public ResponseEntity<?> calcularRotaAcessivel(@Valid @RequestBody CalcularRotaDTO dtoCalcular) {
         try {
             // Extrai os dados do DTO
-            Long usuarioId = dtoCalcular.usuarioId();
+            String usuarioId = dtoCalcular.usuarioId();
             String perfil = dtoCalcular.perfil();
             CalcularRotaDTO.CoordenadasDTO coordenadas = dtoCalcular.coordenadas();
 
