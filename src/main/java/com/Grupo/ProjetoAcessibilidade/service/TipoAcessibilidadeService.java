@@ -3,6 +3,7 @@ package com.Grupo.ProjetoAcessibilidade.service;
 import com.Grupo.ProjetoAcessibilidade.dto.TipoAcessibilidadeDTO;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.model.TipoAcessibilidade;
+import com.Grupo.ProjetoAcessibilidade.model.TipoPonto;
 import com.Grupo.ProjetoAcessibilidade.repository.TipoAcessibilidadeRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,15 @@ public class TipoAcessibilidadeService {
 
     public TipoAcessibilidadeService(TipoAcessibilidadeRepository tipoAcessibilidadeRepository) {
         this.tipoAcessibilidadeRepository = tipoAcessibilidadeRepository;
+    }
+
+    public TipoAcessibilidade findOrCreate(TipoAcessibilidadeDTO dto) {
+        return tipoAcessibilidadeRepository.findByTipo(dto.tipo())
+                .orElseGet(() -> {
+                    TipoAcessibilidade tipoAcessibilidade = new TipoAcessibilidade();
+                    tipoAcessibilidade.setTipo(dto.tipo());
+                    return tipoAcessibilidadeRepository.save(tipoAcessibilidade);
+                });
     }
 
     public List<TipoAcessibilidade> listar() {

@@ -7,16 +7,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const destinoInput = document.getElementById('ponto-destino');
     const partidaSugestoes = document.getElementById('partida-sugestoes');
     const destinoSugestoes = document.getElementById('destino-sugestoes');
-    const perfilSelect = document.getElementById('perfil-usuario');
+    const perfilSelect = document.createElement('input'); // input oculto para guardar valor
+    perfilSelect.type = 'hidden';
+    perfilSelect.value = 'pedestrian'; // padrão
+    form.appendChild(perfilSelect);
     const buscarButton = document.getElementById('btn-buscar-rota');
+    const summaryBox = document.getElementById('rota-summary-box');
 
     // --- PONTOS DE API ---
     const GEO_API_BASE = 'https://nominatim.openstreetmap.org/search';
-    const ROTA_API = '/rotas/calcular'; // URL Correta!
+    const ROTA_API = '/rotas/calcular';
+    const PONTOS_API = '/pontos-acessibilidade';
+
+    // --- ÍCONE PERSONALIZADO ---
+    const accessibleIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/107/107798.png',
+        iconSize: [25, 25], iconAnchor: [12, 25], popupAnchor: [0, -25]
+    });
 
     // --- CONFIGURAÇÃO DO MAPA ---
-    // (Se o mapa sumiu, foi porque o script quebrou antes de chegar aqui)
-    const map = L.map('map').setView([-26.9187, -49.066], 13); // Blumenau
+    const map = L.map('map').setView([-26.9187, -49.066], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
@@ -25,17 +35,137 @@ document.addEventListener('DOMContentLoaded', () => {
     let coordsPartidaSelecionada = null;
     let coordsDestinoSelecionada = null;
 
-    // --- LÓGICA DE AUTOCOMPLETAR ---
-    setupAutocomplete(partidaInput, partidaSugestoes, (coords) => {
-        coordsPartidaSelecionada = coords;
-    });
-    setupAutocomplete(destinoInput, destinoSugestoes, (coords) => {
-        coordsDestinoSelecionada = coords;
+    // --- LÓGICA PRINCIPAL ---
+    carregarPontosDeAcessibilidade();
+    setupAutocomplete(partidaInput, partidaSugestoes, (coords) => coordsPartidaSelecionada = coords);
+    setupAutocomplete(destinoInput, destinoSugestoes, (coords) => coordsDestinoSelecionada = coords);
+    form.addEventListener('submit', onFormSubmit);
+
+    // --- BOTÕES DE PERFIL ---
+    const profileButtons = document.querySelectorAll('.profile-btn');
+    profileButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            profileButtons.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            perfilSelect.value = btn.dataset.value;
+        });
     });
 
-    /**
-     * Função que cria a lógica de autocompletar
-     */
+    // --- FUNÇÕES ---
+
+    async function carregarPontosDeAcessibilidade() {
+        try {
+            const response = await fetch(PONTOS_API);
+            if (!response.ok) throw new Error(`Não foi possível carregar os pontos (Status: ${response.status})`);
+            const pontosAcessibilidade = await response.json();
+
+            if (!pontosAcessibilidade || pontosAcessibilidade.length === 0) {
+                console.warn("Nenhum ponto de acessibilidade encontrado.");
+                return;
+            }
+
+            const markersLayer = L.layerGroup();
+            pontosAcessibilidade.forEach(item => {
+                const ponto = item.ponto;
+                const tipoAcesso = item.tipoAcessibilidade;
+                if (ponto && ponto.latitude && ponto.longitude) {
+                    const marker = L.marker([ponto.latitude, ponto.longitude], { icon: accessibleIcon });
+                    const nome = ponto.nome || 'Ponto de Acessibilidade';
+                    const tipo = tipoAcesso ? tipoAcesso.tipo : 'Acessível';
+                    marker.bindPopup(`<b>${nome}</b><br>${tipo}`);
+                    markersLayer.addLayer(marker);
+                }
+            });
+            markersLayer.addTo(map);
+            console.log(`Carregados ${pontosAcessibilidade.length} pontos de acessibilidade.`);
+        } catch (error) {
+            console.error("Erro ao carregar pontos:", error);
+            mostrarMensagem(error.message, 'error');
+        }
+    }
+
+    async function onFormSubmit(event) {
+        event.preventDefault();
+        buscarButton.disabled = true;
+        buscarButton.textContent = 'Calculando rota...';
+        summaryBox.style.display = 'none';
+
+        if (rotaAtualLayer) map.removeLayer(rotaAtualLayer);
+
+        try {
+            if (!coordsPartidaSelecionada) throw new Error('Selecione um ponto de partida da lista.');
+            if (!coordsDestinoSelecionada) throw new Error('Selecione um ponto de destino da lista.');
+
+            const pedidoRota = {
+                usuarioId: "6902889dcd6a0a23937c55d2",
+                perfil: perfilSelect.value,
+                coordenadas: {
+                    latInicio: parseFloat(coordsPartidaSelecionada.lat),
+                    lonInicio: parseFloat(coordsPartidaSelecionada.lon),
+                    latFim: parseFloat(coordsDestinoSelecionada.lat),
+                    lonFim: parseFloat(coordsDestinoSelecionada.lon)
+                }
+            };
+
+            const dadosRotaString = await calcularRotaBackend(pedidoRota);
+            const rotaValhalla = JSON.parse(dadosRotaString);
+
+            console.log("Retorno do backend:", rotaValhalla);
+
+            if (rotaValhalla?.trip?.legs?.[0]?.shape) {
+                const pontosDecodificados = decodePolyline(rotaValhalla.trip.legs[0].shape);
+
+                let corDaRota = 'blue';
+                if (perfilSelect.value === 'wheelchair') corDaRota = '#006400';
+                if (perfilSelect.value === 'pedestrian_avoid_stairs') corDaRota = '#FF8C00';
+
+                rotaAtualLayer = L.polyline(pontosDecodificados, { color: corDaRota, weight: 6 }).addTo(map);
+                map.fitBounds(rotaAtualLayer.getBounds());
+
+                mostrarMensagem("Rota calculada com sucesso!", 'success');
+            } else {
+                throw new Error('Não foi possível encontrar uma rota entre esses pontos.');
+            }
+
+        } catch (error) {
+            mostrarMensagem(error.message, 'error');
+            console.error("Erro detalhado:", error);
+        } finally {
+            buscarButton.disabled = false;
+            buscarButton.textContent = 'Buscar Rota';
+        }
+    }
+
+    function mostrarMensagem(mensagem, tipo = 'warning') {
+        summaryBox.textContent = mensagem;
+        summaryBox.className = `rota-summary ${tipo}`;
+        summaryBox.style.display = 'block';
+    }
+
+    async function calcularRotaBackend(pedido) {
+        const response = await fetch(ROTA_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(pedido)
+        });
+
+        const responseBodyText = await response.text();
+
+        if (!response.ok) {
+            try {
+                const erroJson = JSON.parse(responseBodyText);
+                throw new Error(`Erro no servidor: ${erroJson.message || 'Erro de validação'}`);
+            } catch (e) {
+                console.error("Erro não JSON:", responseBodyText);
+                throw new Error(`Servidor falhou (Status: ${response.status})`);
+            }
+        }
+
+        if (!responseBodyText) throw new Error('Resposta vazia do servidor.');
+
+        return responseBodyText;
+    }
+
     function setupAutocomplete(input, containerSugestoes, onSelect) {
         let debounceTimer;
         input.addEventListener('input', () => {
@@ -51,27 +181,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     const sugestoes = await geocodificar(query);
                     mostrarSugestoes(sugestoes, containerSugestoes, input, onSelect);
                 } catch (error) {
-                    console.error("Erro no autocompletar:", error);
-                    containerSugestoes.innerHTML = ''; // Limpa em caso de erro
+                    console.error("Erro no autocomplete:", error);
+                    containerSugestoes.innerHTML = '';
                 }
             }, 300);
         });
 
-        // Fecha a lista se clicar fora
         document.addEventListener('click', (e) => {
             if (!containerSugestoes.contains(e.target) && e.target !== input) {
-                 containerSugestoes.innerHTML = '';
+                containerSugestoes.innerHTML = '';
             }
         });
     }
 
-    /**
-     * Mostra as sugestões (lista) na tela
-     */
     function mostrarSugestoes(sugestoes, container, input, onSelect) {
         container.innerHTML = '';
         if (!sugestoes || sugestoes.length === 0) return;
-
         sugestoes.forEach(sugestao => {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'autocomplete-item';
@@ -85,55 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- EVENTO PRINCIPAL ---
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        buscarButton.disabled = true;
-        buscarButton.textContent = 'Calculando rota...';
-        if (rotaAtualLayer) {
-            map.removeLayer(rotaAtualLayer);
-        }
-
-        try {
-            if (!coordsPartidaSelecionada) throw new Error('Ponto de partida inválido. Selecione um da lista.');
-            if (!coordsDestinoSelecionada) throw new Error('Ponto de destino inválido. Selecione um da lista.');
-
-            // JSON correto para o CalcularRotaDTO
-            const pedidoRota = {
-                usuarioId: "6902889dcd6a0a23937c55d2",
-                perfil: perfilSelect.value,
-                coordenadas: {
-                    latInicio: coordsPartidaSelecionada.lat,
-                    lonInicio: coordsPartidaSelecionada.lon,
-                    latFim: coordsDestinoSelecionada.lat,
-                    lonFim: coordsDestinoSelecionada.lon
-                }
-            };
-
-            const dadosRotaString = await calcularRotaBackend(pedidoRota);
-            const rotaValhalla = JSON.parse(dadosRotaString); // <-- Cuidado aqui, se a string for vazia, vai dar erro
-
-            if (rotaValhalla && rotaValhalla.trip && rotaValhalla.trip.legs[0] && rotaValhalla.trip.legs[0].shape) {
-                const pontosDecodificados = decodePolyline(rotaValhalla.trip.legs[0].shape);
-                rotaAtualLayer = L.polyline(pontosDecodificados, { color: 'blue', weight: 6 }).addTo(map);
-                map.fitBounds(rotaAtualLayer.getBounds());
-            } else {
-                // Pode ser que o Valhalla simplesmente não achou rota (ex: ilhas)
-                throw new Error('Não foi possível encontrar uma rota acessível entre esses dois pontos.');
-            }
-
-        } catch (error) {
-             // Mostra erros de validação, erros de rede, ou erros de JSON.parse
-            alert(error.message);
-            console.error("Erro detalhado:", error); // Loga o erro completo no console
-        } finally {
-            buscarButton.disabled = false;
-            buscarButton.textContent = 'Buscar Rota';
-        }
-    });
-
-    // --- FUNÇÕES AUXILIARES ---
-
     async function geocodificar(endereco) {
         const BLUMENAU_VIEWBOX = '-49.204,-26.822,-49.006,-26.978';
         const params = new URLSearchParams({
@@ -144,46 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         const response = await fetch(`${GEO_API_BASE}?${params.toString()}`);
         if (!response.ok) throw new Error('Erro na API de geocodificação.');
-        return await response.json(); // Retorna a LISTA de sugestões
+        return await response.json();
     }
 
-    /**
-     * Envia o pedido de rota para o backend
-     * (CORRIGIDO para tratar o 'Unexpected token <')
-     */
-    async function calcularRotaBackend(pedido) {
-        const response = await fetch(ROTA_API, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(pedido)
-        });
-
-        // Lê a resposta SEMPRE como TEXTO primeiro
-        const responseBody = await response.text();
-
-        if (!response.ok) {
-            // Se falhou, tenta ver se o TEXTO é um JSON de erro
-            try {
-                const erroJson = JSON.parse(responseBody);
-                throw new Error(`Erro no servidor: ${erroJson.message || 'Erro de validação'}`);
-            } catch (e) {
-                // Se NÃO for JSON (provavelmente HTML de erro do Spring)
-                console.error("O servidor enviou um erro que não é JSON:", responseBody);
-                throw new Error(`O servidor falhou (Status: ${response.status}). Verifique o log do IntelliJ.`);
-            }
-        }
-
-        // Se deu tudo certo (200 OK), retorna a STRING da rota
-        // Verifica se a string não está vazia antes de retornar
-        if (!responseBody) {
-             throw new Error('O servidor retornou uma resposta vazia.');
-        }
-        return responseBody;
-    }
-
-    /**
-     * Decodifica o formato polyline6 do Valhalla
-     */
     function decodePolyline(str, precision) {
         let index = 0, lat = 0, lng = 0, coordinates = [], shift = 0, result = 0, byte = null,
             latitude_change, longitude_change,
@@ -209,4 +248,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return coordinates;
     }
+
 });

@@ -3,51 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rotas Acessíveis</title>
 
+        <h1>EazyMob</h1>
+
+
+
+    <!-- Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
+    <!-- CSS externo -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main>
-    <h1>Rotas Acessíveis</h1>
-    <p>Encontre o melhor caminho para seu destino.</p>
 
-    <form id="form-rota">
+<!-- Mapa ocupa o fundo -->
+<div id="map"></div>
 
-        <div class="form-group">
-            <label for="ponto-partida">De onde você sai?</label>
-            <div class="autocomplete-wrapper">
-                <input type="text" id="ponto-partida" placeholder="Ex: Prefeitura de Blumenau" required autocomplete="off">
-                <div class="autocomplete-items-container" id="partida-sugestoes"></div>
-            </div>
+<!-- Painel flutuante -->
+<form id="form-rota">
+    <div class="top-bar">
+        <!-- Botões agora navegam para as páginas correspondentes -->
+        <button type="button" title="Usuário" onclick="window.location.href='usuario.html'">
+            <img src="images/usuario.png" alt="Usuário" width="24" height="24">
+        </button>
+        <button type="button" title="Configurações" onclick="window.location.href='config.html'">
+            <img src="images/config.png" alt="Configurações" width="24" height="24">
+        </button>
+    </div>
+
+    <h1>EazyMob</h1>
+
+    <!-- Campos de partida e destino -->
+    <div class="form-group">
+        <label for="ponto-partida">De onde você sai?</label>
+        <div class="autocomplete-wrapper">
+            <input type="text" id="ponto-partida" placeholder="Ex: Prefeitura de Blumenau" autocomplete="off">
+            <div class="autocomplete-items-container" id="partida-sugestoes"></div>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="ponto-destino">Para onde você vai?</label>
-            <div class="autocomplete-wrapper">
-                <input type="text" id="ponto-destino" placeholder="Ex: Rua Ingo Hering, 20" required autocomplete="off">
-                <div class="autocomplete-items-container" id="destino-sugestoes"></div>
-            </div>
+    <div class="form-group">
+        <label for="ponto-destino">Para onde você vai?</label>
+        <div class="autocomplete-wrapper">
+            <input type="text" id="ponto-destino" placeholder="Ex: Rua Ingo Hering, 20" autocomplete="off">
+            <div class="autocomplete-items-container" id="destino-sugestoes"></div>
         </div>
+    </div>
 
-        <div class="form-group">
-            <label for="perfil-usuario">Qual seu perfil de locomoção?</label>
-            <select id="perfil-usuario">
-                <option value="pedestrian">Pedestre (Padrão)</option>
-                <option value="wheelchair">Cadeirante</option>
-                <option value="pedestrian_avoid_stairs">Idoso (Evitar escadas)</option>
-            </select>
-        </div>
-        <button type="submit" id="btn-buscar-rota">Buscar Rota</button>
-    </form>
+    <!-- Botões de perfil com imagens -->
+    <div class="profile-buttons">
+        <button type="button" class="profile-btn active" data-value="pedestrian" title="Pedestre">
+            <img src="images/padrão.png" alt="Padrão" width="18" height="18">
+        </button>
+        <button type="button" class="profile-btn" data-value="wheelchair" title="Cadeirante">
+            <img src="images/cadeirante.png" alt="Cadeirante" width="18" height="18">
+        </button>
+        <button type="button" class="profile-btn" data-value="pedestrian_avoid_stairs" title="Idoso">
+            <img src="images/idoso.png" alt="Idoso" width="18" height="18">
+        </button>
+    </div>
 
-    <div id="map"></div>
-</main>
+    <button type="submit" id="btn-buscar-rota">Buscar Rota</button>
+</form>
 
+<div id="rota-summary-box" class="rota-summary"></div>
+
+<!-- Scripts -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script src="script.js"></script>
 </body>
 </html>

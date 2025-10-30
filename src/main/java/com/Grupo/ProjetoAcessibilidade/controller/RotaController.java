@@ -3,6 +3,7 @@ package com.Grupo.ProjetoAcessibilidade.controller;
 import com.Grupo.ProjetoAcessibilidade.dto.CalcularRotaDTO;
 import com.Grupo.ProjetoAcessibilidade.dto.PontoDTO;
 import com.Grupo.ProjetoAcessibilidade.dto.RotaDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.RouteComparisonResponse;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ValhallaNoRouteFoundException;
 import com.Grupo.ProjetoAcessibilidade.model.Rota;
 import com.Grupo.ProjetoAcessibilidade.model.Usuario;
@@ -49,19 +50,16 @@ public class RotaController {
             String perfil = dtoCalcular.perfil();
             CalcularRotaDTO.CoordenadasDTO coordenadas = dtoCalcular.coordenadas();
 
-            // Chama o Service, que retorna Mono<String>
+            // Chama o Service (que retorna Mono<String>)
             Mono<String> monoResultado = rotaService.calcularRotaAcessivel(
                     usuarioId,
                     perfil,
                     coordenadas
             );
 
-            // *** CORREÇÃO AQUI: Espera o Mono completar e pega a String ***
-            // O .block() vai pausar aqui até o Valhalla responder (ou dar timeout).
-            // É bom adicionar um timeout para não esperar para sempre.
-            String resultadoRota = monoResultado.block(Duration.ofSeconds(30)); // Espera por até 30 segundos
+            // .block() espera a resposta do Valhalla
+            String resultadoRota = monoResultado.block(Duration.ofSeconds(30)); // Espera 30s
 
-            // Se o .block() retornar null (acontece se o Mono completar vazio), trate como erro
             if (resultadoRota == null) {
                 throw new ValhallaNoRouteFoundException("Valhalla não retornou uma rota (resposta vazia).");
             }
@@ -70,8 +68,7 @@ public class RotaController {
             return ResponseEntity.ok(resultadoRota);
 
         } catch (Exception e) {
-            // Captura erros do .block() (como timeout) ou erros lançados pelo Service
-            System.err.println("Erro no Controller ao calcular rota: " + e.getMessage()); // Log
+            System.err.println("Erro no Controller ao calcular rota: " + e.getMessage());
             return ResponseEntity.internalServerError().body("Erro ao calcular a rota: " + e.getMessage());
         }
     }

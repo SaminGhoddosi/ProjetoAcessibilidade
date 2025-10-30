@@ -2,6 +2,7 @@ package com.Grupo.ProjetoAcessibilidade.service;
 
 import com.Grupo.ProjetoAcessibilidade.dto.PontoDTO;
 // Removi a importação não utilizada: import com.Grupo.ProjetoAcessibilidade.dto.ValhallaRequest;
+import com.Grupo.ProjetoAcessibilidade.dto.ValhallaResponseDTO;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ValhallaCommunicationException;
 import com.Grupo.ProjetoAcessibilidade.model.Ponto;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,43 @@ public class ValhallaService {
     public ValhallaService(WebClient valhallaWebClient) {
         this.valhallaWebClient = valhallaWebClient;
     }
+
+
+    /**
+     * Busca uma rota no Valhalla, agora retornando um Objeto DTO
+     * e pedindo os atributos de acessibilidade (como contagem de escadas).
+     */
+    public Mono<ValhallaResponseDTO> getRoute(Map<String, Object> requestBody) {
+
+        // --- ADIÇÃO IMPORTANTE ---
+        // Pede ao Valhalla para contar os atributos na rota
+        requestBody.put("attributes", List.of(
+                "shape",
+                "length",
+                "time",
+                "steps_count"
+        ));
+
+        requestBody.put("id", requestBody.get("costing") + "_route_request");
+
+        log.info("Enviando requisição (CORRIGIDA) para Valhalla: {}", requestBody);
+
+        return valhallaWebClient.post()
+                .uri("/route")
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(ValhallaResponseDTO.class)
+                .onErrorMap(WebClientResponseException.class, e -> {
+                    log.error("Erro na resposta do Valhalla. Status: {}, Body: {}", e.getStatusCode(), e.getResponseBodyAsString(), e);
+                    return new ValhallaCommunicationException("Erro de comunicação com o serviço Valhalla: " + e.getStatusCode());
+                })
+                .onErrorMap(e -> !(e instanceof ValhallaCommunicationException), e -> {
+                    log.error("Erro de conexão com o Valhalla.", e);
+                    return new ValhallaCommunicationException("Não foi possível conectar ao serviço Valhalla.");
+                });
+    }
+
+
 
     /**
      * Método original para buscar uma rota simples entre dois pontos.

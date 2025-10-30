@@ -17,6 +17,15 @@ public class TipoPontoService {
         this.tipoPontoRepository = tipoPontoRepository;
     }
 
+    public TipoPonto findOrCreate(TipoPontoDTO dto) {
+        return tipoPontoRepository.findByTipo(dto.tipo())
+                .orElseGet(() -> {
+                    TipoPonto tipoPonto = new TipoPonto();
+                    tipoPonto.setTipo(dto.tipo());
+                    return tipoPontoRepository.save(tipoPonto);
+                });
+    }
+
     public List<TipoPonto> listar() {
         return tipoPontoRepository.findAll();
     }

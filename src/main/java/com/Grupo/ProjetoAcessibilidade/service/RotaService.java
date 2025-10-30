@@ -1,7 +1,6 @@
 package com.Grupo.ProjetoAcessibilidade.service;
 
-import com.Grupo.ProjetoAcessibilidade.dto.CalcularRotaDTO;
-import com.Grupo.ProjetoAcessibilidade.dto.RotaDTO;
+import com.Grupo.ProjetoAcessibilidade.dto.*;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ResourceNotFound;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ValhallaCommunicationException;
 import com.Grupo.ProjetoAcessibilidade.exceptions.ValhallaNoRouteFoundException;
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional; // Importe esta
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -130,35 +130,24 @@ public class RotaService {
         return path;
     }
 
-    public Mono<String> calcularRotaAcessivel(String usuarioIdLong, String perfil, CalcularRotaDTO.CoordenadasDTO coordenadas) throws RuntimeException {
+    public Mono<String> calcularRotaAcessivel(String usuarioId, String perfil, CalcularRotaDTO.CoordenadasDTO coordenadas) throws RuntimeException {
 
-        System.out.println("RotaService: Iniciando cálculo para Usuario ID (Long): " + usuarioIdLong + ", Perfil: " + perfil);
+        System.out.println("RotaService (SIMPLES): Iniciando cálculo para Perfil: " + perfil);
 
-        // 1. Buscar usuário: CONVERTE Long para String E USA orElseThrow
-        String usuarioIdString = String.valueOf(usuarioIdLong); // Converte Long para String
-        System.out.println("RotaService: Buscando usuário com ID (String): " + usuarioIdString);
-
-        Usuario usuario = usuarioService.buscarPorId(usuarioIdString);
-
-        // Se chegou aqui, o usuário foi encontrado com sucesso.
-        System.out.println("RotaService: Usuário encontrado: " + usuario.getNome());
-
+        // 1. Buscar usuário
+        Usuario usuario = usuarioService.buscarPorId(usuarioId);
+        System.out.println("RotaService (SIMPLES): Usuário encontrado: " + usuario.getNome());
 
         // 2. Buscar as opções de custo
-        System.out.println("RotaService: Buscando opções de custo para o perfil: " + perfil);
         Map<String, Object> costingOptions = valhallaProfileService.getCostingOptionsForProfile(perfil);
         if (costingOptions == null) {
-            System.err.println("RotaService: ValhallaProfileService retornou costingOptions nulas!");
-            // Retorna Mono com erro para fluxo reativo
             return Mono.error(new RuntimeException("Não foi possível obter as opções de custo para o perfil: " + perfil));
         }
 
-        // 3. Buscar waypoints (Placeholder)
-        System.out.println("RotaService: Buscando waypoints (simulado)");
+        // 3. Waypoints (vazio por enquanto)
         List<Ponto> waypoints = List.of();
 
-        // 4. Criar Pontos início/fim (Corrigido para String, conforme Ponto.java)
-        System.out.println("RotaService: Criando Ponto inicio/fim (Ponto espera String)");
+        // 4. Criar Pontos início/fim
         Ponto pontoInicio = new Ponto();
         pontoInicio.setLatitude(coordenadas.latInicio());
         pontoInicio.setLongitude(coordenadas.lonInicio());
@@ -167,19 +156,15 @@ public class RotaService {
         pontoFim.setLatitude(coordenadas.latFim());
         pontoFim.setLongitude(coordenadas.lonFim());
 
-        // 5. Chamar ValhallaService REAL
-        System.out.println("RotaService: Chamando ValhallaService.getAccessibleRouteWithOptions...");
-        Mono<String> monoRespostaValhalla = valhallaService.getAccessibleRouteWithOptions(
+        // 5. Chamar o ValhallaService
+        // (Estamos chamando o método 'getAccessibleRouteWithOptions' que retorna Mono<String>)
+        System.out.println("RotaService (SIMPLES): Chamando ValhallaService.getAccessibleRouteWithOptions...");
+        return valhallaService.getAccessibleRouteWithOptions(
                 pontoInicio,
                 pontoFim,
                 costingOptions,
                 waypoints
         );
-
-        // 6. Retornar o resultado
-        System.out.println("RotaService: Retornando o Mono da resposta do Valhalla para o Controller");
-        return monoRespostaValhalla;
     }
 
-
-}
+    }

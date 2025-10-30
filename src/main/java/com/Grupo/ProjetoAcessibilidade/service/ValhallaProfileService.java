@@ -29,6 +29,7 @@ public class ValhallaProfileService {
         }
 
         switch (perfilMobilidade.toUpperCase()) {
+            case "WHEELCHAIR":
             case "CADEIRANTE":
                 System.out.println("ValhallaProfileService: Gerando opções para CADEIRANTE.");
                 options.put("walking_speed", 4.0);       // Velocidade um pouco menor
@@ -39,6 +40,7 @@ public class ValhallaProfileService {
                 // Adicione outras opções se necessário
                 break;
 
+            case "PEDESTRIAN_AVOID_STAIRS":
             case "IDOSO":
                 System.out.println("ValhallaProfileService: Gerando opções para IDOSO.");
                 options.put("walking_speed", 3.5);       // Velocidade de caminhada mais lenta

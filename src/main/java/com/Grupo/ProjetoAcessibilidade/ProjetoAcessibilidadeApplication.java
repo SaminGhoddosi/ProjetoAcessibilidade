@@ -28,33 +28,26 @@ public class ProjetoAcessibilidadeApplication {
     @Bean
     public CommandLineRunner importOsmData(OsmImportService osmImportService) {
         return args -> {
+            String pbfFilePath = null;
             try {
-                // 1. Defina o caminho para o seu arquivo .pbf
-                //    Coloque o arquivo 'blumenau-acessibilidade.pbf' na raiz do seu projeto ou em um local conhecido.
-                String pbfFilePath = "blumenau-acessibilidade.pbf"; //
+                // Certifique-se que este arquivo está na raiz do seu projeto
+                pbfFilePath = "blumenau-acessibilidade.pbf";
 
                 System.out.println("Iniciando importação do arquivo PBF: " + pbfFilePath);
-
                 FileInputStream inputStream = new FileInputStream(pbfFilePath);
-
-                // 2. Crie um leitor PBF
                 OsmosisReader reader = new OsmosisReader(inputStream);
 
-                // 3. Configure o "Sink" (o nosso serviço de importação)
                 reader.setSink(osmImportService);
+                reader.run(); // Inicia a leitura
 
-                // 4. Inicie o processo de leitura e processamento
-                reader.run(); // Isso vai chamar o método process() do seu OsmImportService para cada item no arquivo
-
-                System.out.println("Importação do PBF concluída.");
+                System.out.println("Importação do PBF finalizada pelo CommandLineRunner.");
 
             } catch (FileNotFoundException e) {
-                System.err.println("Erro: Arquivo PBF não encontrado. " + e.getMessage());
+                System.err.println("ERRO: Arquivo PBF não encontrado em: " + pbfFilePath);
             } catch (Exception e) {
                 System.err.println("Erro durante a importação do PBF: " + e.getMessage());
                 e.printStackTrace();
             }
         };
     }
-
 }
